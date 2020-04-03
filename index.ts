@@ -7,7 +7,13 @@ const server = http.createServer();
 const publicDir = p.resolve(__dirname, "public");
 
 server.on("request", (request: IncomingMessage, response: ServerResponse) => {
-  const { url: path } = request;
+  const { url: path, method } = request;
+  if (method === "POST") {
+    // method not allowed
+    response.statusCode = 405;
+    response.end();
+    return;
+  }
   const pathObject = url.parse(path);
   const { pathname } = pathObject;
   let filename = pathname.substr(1);
