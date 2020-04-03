@@ -1,28 +1,25 @@
 import { IncomingMessage, ServerResponse } from "http";
 import * as http from "http";
 import * as url from "url";
-const api = require("./api.js");
+import * as fs from "fs";
+import * as p from "path";
 const server = http.createServer();
+const publicDir = p.resolve(__dirname, "public");
 
 server.on("request", (request: IncomingMessage, response: ServerResponse) => {
   const { url: path } = request;
   const pathObject = url.parse(path);
   const { pathname } = pathObject;
-  switch (pathname) {
-    case "/index.html":
-      // __dirname： 当前文件所在目录
-      api.setContentType("text/html", response);
-      api.readFileAndReturn("index.html", response);
-      break;
-    case "/style.css":
-      api.setContentType("text/css", response);
-      api.readFileAndReturn("style.css", response);
-      break;
-    case "/main.js":
-      api.setContentType("text/javascript", response);
-      api.readFileAndReturn("main.js", response);
-      break;
-  }
+  const filename = pathname.substr(1);
+  fs.readFile(p.resolve(publicDir, filename), (err, data) => {
+    // 如果请求的文件路径存在，就返回，不存在就返回404
+    if (err) {
+      response.statusCode = 404;
+      response.end();
+    } else {
+      response.end(data.toString());
+    }
+  });
 });
 
 server.listen(8888);
