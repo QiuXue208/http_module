@@ -6,5 +6,8 @@
   "devDependencies": {
     "@types/node": "^13.11.0"
   },
-  "author": "Charles <1309571292@qq.com>"
+  "author": "Charles <1309571292@qq.com>",
+  "dependencies": {
+    "commander": "^5.0.0"
+  }
 }

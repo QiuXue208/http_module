@@ -3,8 +3,15 @@ import * as http from "http";
 import * as url from "url";
 import * as fs from "fs";
 import * as p from "path";
+import * as program from "commander";
 const server = http.createServer();
 const publicDir = p.resolve(__dirname, "public");
+// 动态设置缓存时间， 由启动命令决定
+// ts-node-dev index.ts -c 100
+let cacheTime = 3600 * 24 * 365;
+if (process.argv[2] === "-c") cacheTime = parseInt(process.argv[3]);
+
+console.log(process.argv);
 
 server.on("request", (request: IncomingMessage, response: ServerResponse) => {
   const { url: path, method } = request;
@@ -33,6 +40,7 @@ server.on("request", (request: IncomingMessage, response: ServerResponse) => {
         response.end("Service busy, please try again");
       }
     } else {
+      response.setHeader("Cache-Control", `public, max-age=${cacheTime}`);
       response.end(data);
     }
   });
