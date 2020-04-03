@@ -8,16 +8,16 @@ server.on("request", (request: IncomingMessage, response: ServerResponse) => {
   switch (url) {
     case "/index.html":
       // __dirname： 当前文件所在目录
-      api.setContentType("text/html");
-      api.readFileAndReturn("index.html");
+      api.setContentType("text/html", response);
+      api.readFileAndReturn("index.html", response);
       break;
     case "/style.css":
-      api.setContentType("text/css");
-      api.readFileAndReturn("style.css");
+      api.setContentType("text/css", response);
+      api.readFileAndReturn("style.css", response);
       break;
     case "/main.js":
-      api.setContentType("text/javascript");
-      api.readFileAndReturn("main.js");
+      api.setContentType("text/javascript", response);
+      api.readFileAndReturn("main.js", response);
       break;
   }
 });
