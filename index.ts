@@ -10,14 +10,24 @@ server.on("request", (request: IncomingMessage, response: ServerResponse) => {
   const { url: path } = request;
   const pathObject = url.parse(path);
   const { pathname } = pathObject;
-  const filename = pathname.substr(1);
+  let filename = pathname.substr(1);
+  // localhost:8888
+  if (filename === "") filename = "index.html";
   fs.readFile(p.resolve(publicDir, filename), (err, data) => {
     // 如果请求的文件路径存在，就返回，不存在就返回404
     if (err) {
-      response.statusCode = 404;
-      response.end();
+      if (err.errno === -2) {
+        response.statusCode = 404;
+        fs.readFile(p.resolve(publicDir, "./404.html"), (err, data) => {
+          if (err) console.log(err);
+          response.end(data);
+        });
+      } else {
+        response.statusCode = 500;
+        response.end("Service busy, please try again");
+      }
     } else {
-      response.end(data.toString());
+      response.end(data);
     }
   });
 });
